@@ -1,6 +1,7 @@
 const path = require('path');
 const express = require('express');
 const hbs = require('hbs');
+const fetchWeather = require('./utils/fetchWeather');
 
 const app = express();
 
@@ -17,7 +18,7 @@ hbs.registerPartials(partialsPath);
 // Setup static directory to serve
 app.use(express.static(publicDir));
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.get('', (req, res) => {
   res.render('index', {
@@ -41,6 +42,42 @@ app.get('/help', (req, res) => {
   });
 });
 
+app.get('/weather', (req, res) => {
+  const { address } = req.query;
+
+  if (!address) {
+    return res.send({ error: 'Please provide an address' });
+  }
+
+  fetchWeather(
+    address,
+    (error, { temperature, feelslike, weather_descriptions } = {}) => {
+      if (error) {
+        return res.send({ error: error });
+      }
+
+      res.send({
+        location: address,
+        temperature,
+        feelslike,
+        weather_descriptions,
+      });
+    }
+  );
+});
+
+app.get('/products', (req, res) => {
+  if (!req.query.search) {
+    return res.send({
+      error: 'Please provide a search term',
+    });
+  }
+
+  res.send({
+    products: [],
+  });
+});
+
 app.get('/help/*', (req, res) => {
   res.render('notFound', {
     pageType: 'Help article',
@@ -56,13 +93,6 @@ app.get('*', (req, res) => {
     name: 'Gyanas',
   });
 });
-
-// app.get('/weather', (req, res) => {
-//   res.send({
-//     forecast: '50 degrees',
-//     location: 'Africa',
-//   });
-// });
 
 app.listen(port, () => {
   console.log(`Listening at port ${port}`);

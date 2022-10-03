@@ -15,62 +15,46 @@ MongoClient.connect(
 
     const db = client.db(databaseName);
 
-    // db.collection('users').insertOne(
-    //   {
-    //     name: 'Taylor Hill',
-    //     age: 26,
-    //   },
+    // db.collection('users').findOne(
+    //   { _id: new ObjectID('633a92d6c05b868028ab39ba') },
     //   (error, result) => {
     //     if (error) {
-    //       return console.log('Unable to insert user');
+    //       return console.log('Unable to fetch');
     //     }
 
-    //     console.log(result.ops);
+    //     console.log(result);
     //   }
     // );
 
-    // db.collection('users').insertMany(
-    //   [
-    //     {
-    //       name: 'Recess',
-    //       age: 24,
-    //     },
-    //     {
-    //       name: 'Samikshya',
-    //       age: 26,
-    //     },
-    //   ],
-    //   (error, result) => {
-    //     if (error) {
-    //       return console.log('Unable to insert users');
-    //     }
+    // db.collection('users')
+    //   .find({ age: 26 })
+    //   .toArray((error, documents) => {
+    //     console.log(documents);
+    //   });
 
-    //     console.log(result.ops);
-    //   }
-    // );
+    // db.collection('users')
+    //   .find({ age: 26 })
+    //   .count((error, count) => {
+    //     console.log(count);
+    //   });
 
-    db.collection('tasks').insertMany(
-      [
-        {
-          description: 'IT Security',
-          completed: true,
-        },
-        {
-          description: 'Hackerrank',
-          completed: false,
-        },
-        {
-          description: 'Agile Course',
-          completed: true,
-        },
-      ],
+    db.collection('tasks').findOne(
+      {
+        _id: new ObjectID('633ae8f270f5d9d3e84a26a5'),
+      },
       (error, result) => {
         if (error) {
-          return console.log('Unable to insert tasks');
+          return console.log('Error finding document');
         }
 
-        console.log(result.ops);
+        console.log(result);
       }
     );
+
+    db.collection('tasks')
+      .find({ completed: false })
+      .toArray((error, documents) => {
+        console.log(documents);
+      });
   }
 );
